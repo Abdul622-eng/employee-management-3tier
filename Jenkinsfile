@@ -5,13 +5,21 @@ pipeline {
         APP_DIR = "/opt/production-app"
     }
 
-    stage('Checkout Code') {
-    steps {
-        git branch: 'main',
-            credentialsId: 'github-creds',
-            url: 'https://github.com/Abdul622-eng/employee-management-3tier.git'
-    }
-}
+    stage('Update Source') {
+            steps {
+                sh '''
+                echo "Updating source code..."
+
+                cd $APP_DIR
+
+                git config --global --add safe.directory $APP_DIR
+
+                git fetch origin
+
+                git reset --hard origin/main
+                '''
+            }
+        }
     
         stage('Verify Docker') {
             steps {
