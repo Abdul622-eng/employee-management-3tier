@@ -5,23 +5,11 @@ pipeline {
         APP_DIR = "/opt/production-app"
     }
 
-    stages {
-
-        stage('Update Source') {
-            steps {
-                sh '''
-                echo "Updating source code..."
-
-                cd $APP_DIR
-
-                git config --global --add safe.directory $APP_DIR
-
-                git fetch origin
-
-                git reset --hard origin/main
-                '''
-            }
-        }
+    stage('Update Source') {
+    steps {
+        echo 'Code already checked out by Jenkins SCM'
+    }
+}
 
         stage('Verify Docker') {
             steps {
