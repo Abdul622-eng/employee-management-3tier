@@ -5,23 +5,16 @@ pipeline {
         APP_DIR = "/opt/production-app"
     }
 
-    stages {
-
-        stage('Update Source') {
-            steps {
-                sh '''
-                echo "Updating source code..."
-
-                cd $APP_DIR
-
-                git config --global --add safe.directory $APP_DIR
-
-                git fetch origin
-
-                git reset --hard origin/main
-                '''
-            }
-        }
+    stage('Update Source') {
+    steps {
+        sh '''
+        cd /opt/production-app
+        git config --global --add safe.directory /opt/production-app
+        git fetch origin
+        git pull origin main
+        '''
+    }
+}
 
         stage('Verify Docker') {
             steps {
