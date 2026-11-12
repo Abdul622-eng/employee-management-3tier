@@ -5,17 +5,14 @@ pipeline {
         APP_DIR = "/opt/production-app"
     }
 
-    stage('Update Source') {
+    stage('Checkout Code') {
     steps {
-        sh '''
-        cd /opt/production-app
-        git config --global --add safe.directory /opt/production-app
-        git fetch origin
-        git pull origin main
-        '''
+        git branch: 'main',
+            credentialsId: 'github-creds',
+            url: 'https://github.com/Abdul622-eng/employee-management-3tier.git'
     }
 }
-
+    
         stage('Verify Docker') {
             steps {
                 sh '''
