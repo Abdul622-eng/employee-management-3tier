@@ -2,26 +2,10 @@ pipeline {
     agent any
 
     environment {
-        APP_DIR = "/opt/production-app"
+        APP_DIR = "/var/lib/jenkins/workspace/backend-server"
     }
 
     stages {
-
-        stage('Update Source') {
-            steps {
-                sh '''
-                echo "Updating source code..."
-
-                cd $APP_DIR
-
-                git config --global --add safe.directory $APP_DIR
-
-                git fetch origin
-
-                git reset --hard origin/main
-                '''
-            }
-        }
 
         stage('Verify Docker') {
             steps {
@@ -63,7 +47,9 @@ pipeline {
 
                 cd $APP_DIR
 
-                docker compose up -d
+                docker compose down
+
+                docker compose up -d --build
                 '''
             }
         }
@@ -71,17 +57,9 @@ pipeline {
         stage('Health Check') {
             steps {
                 sh '''
-                echo "Waiting for backend to become healthy..."
+                sleep 20
 
-                sleep 15
-
-                curl --retry 5 \
-                     --retry-delay 5 \
-                     --retry-connrefused \
-                     --fail \
-                     http://localhost:8000/health
-
-                echo "Backend is Healthy."
+                curl -f http://localhost:8000/health
                 '''
             }
         }
@@ -90,21 +68,15 @@ pipeline {
     post {
 
         success {
-            echo "========================================"
-            echo "Deployment Successful!"
-            echo "Employee Management System is Live."
-            echo "========================================"
+            echo 'Deployment Successful!'
         }
 
         failure {
-            echo "========================================"
-            echo "Deployment Failed!"
-            echo "Check Console Output for Errors."
-            echo "========================================"
+            echo 'Deployment Failed!'
         }
 
         always {
-            sh 'docker ps'
+            sh 'docker ps -a'
         }
     }
 }
