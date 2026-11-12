@@ -5,7 +5,9 @@ pipeline {
         APP_DIR = "/opt/production-app"
     }
 
-    stage('Update Source') {
+    stages {
+
+        stage('Update Source') {
             steps {
                 sh '''
                 echo "Updating source code..."
@@ -20,7 +22,7 @@ pipeline {
                 '''
             }
         }
-    
+
         stage('Verify Docker') {
             steps {
                 sh '''
@@ -105,3 +107,4 @@ pipeline {
             sh 'docker ps'
         }
     }
+}
